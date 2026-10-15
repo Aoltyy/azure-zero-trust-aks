@@ -6,39 +6,7 @@ Production-ready Terraform repository deploying a **Zero-Trust Private AKS Platf
 
 ## Architecture Overview
 
-```text
-                               +-------------------------------------------------------------+
-                               |                 Virtual Network (10.240.0.0/16)             |
-                               |                                                             |
-+---------------------+        |  +---------------------+        +------------------------+  |
-|  External Operator  |=======>|  | AzureBastionSubnet  |        | aks-nodes-subnet       |  |
-| (az bastion ssh)    | TLS 443|  | (10.240.6.0/26)     |        | (10.240.0.0/22)        |  |
-+---------------------+        |  | [Azure Bastion Host]|        |                        |  |
-                               |  +----------+----------+        |                        |  |
-                               |             | (Private SSH 22)  |                        |  |
-                               |             v                   |                        |  |
-                               |  +---------------------+        | [Private AKS API]      |  |
-                               |  | mgmt-subnet         |=======>| (No Public IP)         |  |
-                               |  | (10.240.4.0/24)     | TCP 443|                        |  |
-                               |  | [Private Jumpbox VM]|        |                        |  |
-                               |  | (Zero Public IP)    |        | [AKS Worker Nodes]     |  |
-                               |  +---------------------+        |  - Azure CNI Overlay   |  |
-                               |                                 |  - Cilium eBPF Engine  |  |
-                               |  +---------------------+        |  - Secrets CSI Driver  |  |
-                               |  | private-endpoints   |        +-----------+------------+  |
-                               |  | subnet              |                    |               |
-                               |  | (10.240.5.4)        |<===================|               |
-                               |  | [Key Vault PE NIC]  |  Private Link (443)                |
-                               |  +----------+----------+                                    |
-                               +-------------|-----------------------------------------------+
-                                             |                               |
-                                             v                               v
-                              +------------------------------+  +----------------------------+
-                              | Azure Key Vault (Private)    |  | Microsoft Entra ID         |
-                              | - Public Access: Disabled    |  | - Workload Identity (OIDC) |
-                              | - RBAC Authorization         |  | - Federated Credentials    |
-                              +------------------------------+  +----------------------------+
-```
+![Azure Zero-Trust Private AKS Architecture](final_diagram.jpg)
 
 ### Key Capabilities
 - **Strict Network Isolation**: 4-tier VNet subnet architecture (`AzureBastionSubnet`, `aks-nodes-subnet`, `mgmt-subnet`, `private-endpoints-subnet`) with default-deny NSGs.
