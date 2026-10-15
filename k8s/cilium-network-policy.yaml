@@ -1,0 +1,43 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: zero-trust-secret-consumer-policy
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app: zero-trust-secret-consumer
+
+  # Ingress Policy: Strict Zero-Trust (Default Deny Inbound)
+  ingress: []
+
+  # Egress Policy: Restrict to CoreDNS, Key Vault Private Endpoint, and K8s API server
+  egress:
+    # 1. Allow CoreDNS for internal cluster service discovery
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+
+    # 2. Allow Egress to Azure Key Vault Private Endpoint (Default: 10.240.5.4/32 or your custom PE IP)
+    - toCIDR:
+        - 10.240.5.4/32 # Replace with your Key Vault Private Endpoint IP (from terraform output key_vault_private_ip)
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+
+    # 3. Allow Egress to Private Kubernetes API Server Endpoint
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

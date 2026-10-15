@@ -1,0 +1,38 @@
+location            = "swedencentral"
+resource_group_name = "rg-zero-trust-aks-swec"
+
+# Networking
+vnet_address_space              = ["10.240.0.0/16"]
+aks_nodes_subnet_prefix         = "10.240.0.0/22"
+mgmt_subnet_prefix              = "10.240.4.0/24"
+private_endpoints_subnet_prefix = "10.240.5.0/24"
+bastion_subnet_prefix           = "10.240.6.0/26"
+
+# Azure Bastion Configuration
+bastion_sku = "Standard"
+
+# Compute & Sizing Constraints (Cost-Optimized for Zero-Trust Private Access)
+jumpbox_vm_size        = "Standard_B2s"
+jumpbox_admin_username = "azureuser"
+jumpbox_private_ip     = "10.240.4.4"
+
+# Private AKS Configuration
+cluster_name           = "aks-zerotrust-swec"
+aks_vm_size            = "Standard_B2s_v2"
+aks_node_count         = 1
+aks_availability_zones = ["1", "2", "3"]
+
+# Kubernetes Overlay Networking
+aks_pod_cidr       = "10.244.0.0/16"
+aks_service_cidr   = "10.0.0.0/16"
+aks_dns_service_ip = "10.0.0.10"
+
+# Identity & Workload Federation
+k8s_service_account_namespace = "default"
+k8s_service_account_name      = "workload-identity-sa"
+
+tags = {
+  Environment = "Zero-Trust-Private"
+  Project     = "Zero-Trust-AKS"
+  ManagedBy   = "Terraform"
+}

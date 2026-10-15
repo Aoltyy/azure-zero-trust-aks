@@ -1,0 +1,55 @@
+# ==============================================================================
+# Git Ignore Rules for Terraform & Azure Cloud Infrastructure
+# ==============================================================================
+
+# Local .terraform directories and provider caches
+**/.terraform/*
+.terraform/
+
+# Terraform State Files (CRITICAL: contain decrypted secrets & infrastructure IDs)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform Plan Files (contain infrastructure state metadata)
+tfplan
+*.tfplan
+tfplan.txt
+*.plan
+
+# Configuration files containing sensitive real-world values
+# Note: Keep terraform.tfvars.example committed as a public template
+*.tfvars
+*.tfvars.json
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration and logs
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+
+# Private keys, certificates, and credentials (CRITICAL)
+*.pem
+*.key
+*.pub
+*.id_rsa
+*.id_ed25519
+jumpbox_key.pem
+
+# Cloud CLI local credentials & caches
+.azure/
+.kube/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
